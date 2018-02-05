@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta lang="en" charset="utf-8" />
+    <title>Balance Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="description" content="This is a balance account tracker application for incremental and decremental transactions">
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Arvo" rel="stylesheet">
+    <!-- <script src="main.js"></script> -->
+</head>
+<header>
+        <h1>Balance Tracker</h1>
+</header>
+<body>
+    <content>
+        <figure id="graphContainer" shape-rendering="crispEdges">
+            <svg xmlns="http://www.w3.org/2000/svg" id="svg">
+                Your browser does not support HTML5 tags. Please use the last version of Chrome, Safari, Firefox or Opera.
+
+<!--                
+
+                <path d="M 0 0 150.50 120" stroke="#20b2aa" fill="none" />
+                <path d="M 150 120 q 30 -60 300 -120" stroke="#20b2aa" fill="none" /> -->
+                
+                
+                
+            </svg>
+        </figure>
+        <commandBox>
+            <form id="subScriptionForm" onsubmit="send(negative, this);" action="balanceTracker.php" method="POST">
+                    <label>Amount: </label><input type="number" placeholder="Your amount here" max="100000000" min="0" required><br><br><br>
+                    <label>Date:   </label><input type="date" placeholder="mm/dd/yyyy" required><br><br><br>
+                    <button class="increment">↑ Increment ↑</button>
+                    <button onclick="negative=!negative;" class="decrement">↓ Decrement ↓</button>
+            </form>
+        </commandBox>
+        <legend>
+            <legendBox>
+                <innerLegendBox>
+                    <xLegend>
+                            <legendSquare></legendSquare>
+                    </xLegend>
+                    <legendFont>Negative</legendFont>
+                </innerLegendBox>
+            </legendBox>
+            <legendBox style="left:97px;">
+                    <xLegend>
+                     <legendSquare style="background-color: #20b2aa;"></legendSquare>
+                    </xLegend>
+                    <legendFont>Positive</legendFont>
+            </legendBox>
+            <totalBox>
+                <totalWrapper id="totalWrapper">
+                    +100$
+                </totalWrapper>
+            </totalBox>
+        </legend>
+    </content>
+</body>
+<script>
+    let negative=false;
+    var graphWrapper=document.getElementById('graphContainer');
+    var graphContainer=document.getElementById('svg');
+            var entries=[1000,-2000,0,0];
+            var numEntries=entries.length;
+            var 
+                maX=graphWrapper.clientWidth,
+                maY=graphWrapper.clientHeight,
+                miX=0,
+                miY=0,
+                cX=0,
+                cY=0;
+
+            var startingPoint=maY;
+            var currentBalance=0;
+            function draw()
+            {
+                var min=entries[0],max=entries[0];
+                for(i=0;i<numEntries;++i)
+                {
+                    if(min>entries[i])
+                    {
+                        min=entries[i];
+                    }
+                    if(max<entries[i])
+                    {
+                        max=entries[i];
+                    }
+                }
+                alert("min: "+min+"\nmax: "+max);
+                var yAxis=max+(-min);
+                var oAxis=maY/yAxis * max;
+                graphContainer.innerHTML+='<path d="M '+0+' '+oAxis+' '+maX+' '+oAxis+'" stroke="white" fill="none" />';
+                for(i=0;i<numEntries;++i)
+                {
+
+                }
+                // window.alert(min+' '+max+' '+oAxis+' '+miX+' '+maX+' '+yAxis);
+            }
+            draw();
+            // for(i=0;i<numEntries;++i)
+            // {
+            //     graphContainer.innerHTML+='<path d="M '+cX*i+' '+maY/entries[i]+' '+150+' '+120+'" stroke="#20b2aa" fill="none" />';
+            // }
+    function send(state, form)
+    {
+            form.preventDefault();
+            if(state)
+            {
+                document.cookie="negative="+negative;
+                // form.submit();
+                //send true
+                return false;
+            }
+            else
+            {
+                document.cookie="negative="+!negative;
+                // form.submit();
+                //send false
+                return false;
+            }
+    }
+    function enclosure()
+    {
+        var form=document.getElementById('subScriptionForm');
+            window.onresize=function()
+            {
+                
+                maX=graphContainer.clientWidth;
+                console.log(maX);
+                // console.log(graphContainerH);
+                // console.log(graphContainerW);
+            };
+       
+
+
+    }
+    enclosure();
+
+</script>
+<style>
+    path{
+        stroke-width: 2px;
+    }
+    svg{
+        height: 100%;
+        width: 100%;
+        /* background-color: white; */
+        position: absolute;
+    }
+    totalBox{
+        height: 100%;
+        /* background-color: black; */
+        position: absolute;
+        right: 0;
+        width: 350px;
+    }
+    totalWrapper{
+        position: absolute;
+        top: 50%;
+        right: 0;
+        font-size: 30px;
+        transform: translateY(-50%);
+        /* background-color: red; */
+        color: #20b2aa;
+        text-align: right;
+        padding-right: 20px;
+    }
+    xLegend{
+        height: 100%;
+        width: 15%;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+    legendFont{
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    legendBox{
+        height: 100%;
+        width: 95px;
+        left: 0;
+        position: relative;
+        /* background-color: black; */
+        position: inherit;
+        color: white;
+    }
+    innerLegendBox
+    {
+        width: 100%;
+        height: 15px;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        /* background-color: red; */
+    }
+    legendSquare{
+        height: 15px;
+        width: 15px;
+        left: 2px;
+        border-radius: 3px;
+        background-color: #d80000;
+        position: relative;
+        top: 50%;
+        display: inline-block;
+        transform: translateY(-50%);
+    }
+    body{
+        margin:0;
+        border:0;
+        min-width: 400px;
+        min-height: 700px;
+        overflow-x: auto;
+        background-color: #495f77;
+        font-family: 'Arvo', serif;
+    }
+    header{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 120px;
+        background-color: darkcyan;
+        font-size: 30px;
+        text-align: center;
+        z-index: 2;
+    }
+    h1{
+        color: white;
+        font-family: 'Poppins', sans-serif;
+        position: relative;
+        top: -20px;
+    }
+    content{
+        height: 100%;
+        position: fixed;
+        min-width: 400px;
+        top: 0;
+        width: 90%;
+        /* background-color: black; */
+        left: 50%;
+        transform: translateX(-50%);
+        z-index:1; 
+    }
+    button{
+        font-family: 'Arvo', serif;
+        background-color: purple;
+        border-radius: 2px;
+        border-width:0;
+
+    }
+    #graphContainer{
+        position: fixed;
+        height: 300px;
+        width: 100%;
+        left: 0;
+        top: 120px;
+        background-color:#2b3947;
+        border-width: 0;
+        border-bottom-width: 1px;
+        border-style: solid;
+        border-color: white;
+        overflow-x: auto;
+        margin: 0;
+        padding: 0;
+    }
+    legend{
+        height: 50px;
+        top: 421px;
+        width: 100%;
+        background-color: #2b3947;
+        position: absolute;
+        left: 0;
+        border: 0;
+        margin:0;
+        padding: 0;
+        border-bottom-left-radius: 7px;
+        border-bottom-right-radius: 7px;
+    }
+    commandBox{
+        position: absolute;
+        top: 470px;
+        left: 0;
+        height: 250px;
+        width: 100%;
+        /* background-color: aliceblue; */
+    }
+    input{
+        position: absolute;
+        left:145px;
+        background-color:#2b3947;
+        font-size: 30px;
+        height: 32px;
+        width: 252px;
+        color: white;
+        border-width: 0;
+        border-radius: 5px;
+    }
+    label{
+        position: absolute;
+        text-align: right;
+        color: black;
+        left: 40px;
+        font-size: 24px;
+        width: 100px;
+        /* background-color: red; */
+        display: inline-box;
+        color: white;
+    }
+    button{
+        font-size: 24px;
+        height: 32x;
+        width: 195px;
+        color: white;
+        border-radius: 5px;
+        padding: 3px;
+        cursor: pointer;
+        display: inline-block;
+    }
+    form{
+        width: 400px;
+        /* background-color: purple; */
+        position: absolute;
+        left: 50%;
+        top:50%;
+        transform: translate(-50%,-50%);
+    }
+    .increment
+    {
+        background-color: #20b2aa;
+        position: relative;
+        bottom: 0;
+    }
+    .increment:hover{
+        background-color: #167c76;
+    }
+    .decrement
+    {
+        background-color: #d80000;
+        position: relative;
+        bottom: 0;
+    }
+    .decrement:hover
+    {
+        background-color: #970000;
+    }
+    #subScriptionForm
+    {
+        text-align: center;
+    }
+    @media(max-width: 800px)
+    {
+        
+    #subScriptionForm
+    {
+        left: 202px;
+    }
+        header{
+            height: 50px;
+        }
+        h1{
+            font-size: 30px;
+            top: -15px;
+        }
+        content{
+            width: 100%;
+        }
+        #graphContainer{
+            top: 52px;
+        }
+        legend{
+            top: 354px;
+        }
+        commandBox{
+            top: 400px;
+        }
+        totalbox{
+            width: 150px;
+        }
+        input{
+            font-size: 20px;
+            left: 118px;
+            /* left: 0; */
+        }
+        label{
+            font-size: 25px;
+            left: 10px;
+        }
+    }
+</style>
+</html>
+<!-- https://stackoverflow.com/questions/7812514/drawing-a-dot-on-html5-canvas -->
