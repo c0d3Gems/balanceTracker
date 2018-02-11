@@ -21,24 +21,25 @@
             </svg>
         </figure>
         <commandBox>
-            <form id="subScriptionForm" onsubmit="send(negative, this);" action="balanceTracker.php" method="POST">
-                    <label>Amount: </label><input type="number" placeholder="Your amount here" max="100000000" min="0" required><br><br><br>
-                    <label>Date:   </label><input type="date" placeholder="mm/dd/yyyy" required><br><br><br>
-                    <button class="increment">↑ Increment ↑</button>
-                    <button onclick="negative=!negative;" class="decrement">↓ Decrement ↓</button>
-            </form>
+            <div id="subScriptionForm">
+                    <label>Amount: </label><input type="number" placeholder="Your amount here" max="100000000" min="0" id="amount" required><br><br><br>
+                    <label>Date:   </label><input type="date" placeholder="mm/dd/yyyy" id="date" required><br><br><br>
+                    <button onclick="chart.submit(false);" class="increment">↑ Increment ↑</button>
+                    <button onclick="chart.submit(true);" class="decrement">↓ Decrement ↓</button>
+            </div>
         </commandBox>
         <legend>
             <totalBox>
                 <totalWrapper id="totalWrapper">
-                    0$
+                    
                 </totalWrapper>
             </totalBox>
         </legend>
     </content>
 </body>
 <script>
-    function chart()
+    negative=true;
+    function chartObject()
     {
         var currency='$';
         var currentBalance=0;
@@ -46,7 +47,7 @@
         var svg=document.getElementById('svg');
         var svgHeight=svg.clientHeight;
         var svgWidth=svg.clientWidth;
-        var entries=[3,6,2,7,4,8];
+        var entries=[];
         var values=[];
         var minValue=currentBalance;
         var maxValue=currentBalance;
@@ -63,7 +64,6 @@
             {
                 values[i]=values[i-1]+entries[i-1];
             }
-            console.log('values: ' +values);
         }
         function getMinMaxValues()
         {
@@ -112,6 +112,7 @@
         function resizeGraph()
         {
             svg.innerHTML='';
+            getValues();
             drawOxAxisValues();
             determineOxAxis();
         }
@@ -151,32 +152,38 @@
             printBalance();
         };
         //testing
-
-
-
-    }
-    chart();
-
-   
-    function send(state, form)
-    {
-            form.preventDefault();
-            if(state)
+        
+            this.submit = function(negative)
             {
-                document.cookie="negative="+negative;
-                // form.submit();
-                //send true
-                return false;
+                var form=document.getElementById('subScriptionForm');
+                form.addEventListener('click', function(event){
+                    event.preventDefault();
+                });
+                var amount=document.getElementById('amount').value;
+                var date=document.getElementById('date').value;
+                if(negative)
+                    entries[entries.length]=-Number(amount);
+                else
+                        entries[entries.length]=Number(amount);
+                    resizeGraph();
+                    
+                svgWidth=svg.clientWidth;
+                if(entries.length)
+                    pixelsPerSegmentOx=svgWidth/(entries.length-1);
+                else
+                    pixelsPerSegmentOx=1;
+                resizeGraph();
+                    printBalance();
             }
-            else
-            {
-                document.cookie="negative="+!negative;
-                // form.submit();
-                //send false
-                return false;
-            }
-    }
     
+
+
+
+
+
+    }
+    var chart=new chartObject();
+
 
 </script>
 <style>
@@ -385,14 +392,25 @@
     }
     #subScriptionForm
     {
+        position: absolute;
+        left: 50%;
+        transform:translateX(-50%);
         text-align: center;
+        padding: 0;
+        margin: 0;
+        display: block;
+        height: 160px;
+        width: 500px;
+        top: 30px;
     }
     @media(max-width: 800px)
     {
         
     #subScriptionForm
     {
-        left: 202px;
+        position: absolute;
+        left: 53%;
+        transform: translateX(-50%);
     }
         header{
             height: 50px;
